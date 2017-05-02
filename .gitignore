@@ -1,5 +1,6 @@
 .DS_Store
 _build/
+_buildos/
 ## Various settings
 *.pbxuser
 !default.pbxuser
