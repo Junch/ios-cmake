@@ -62,13 +62,31 @@ echo "$(tput sgr0)"
 
 echo "$(tput setaf 2)"
 echo "###################################################################"
-echo "# x86_64 for iOS Simulator"
+echo "# i386 for iOS Simulator"
 echo "###################################################################"
 echo "$(tput sgr0)"
 
 (
     mkdir ${GTEST_SRC_DIR}/_build > /dev/null
     pushd ${GTEST_SRC_DIR}/_build > /dev/null
+    cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM=SIMULATOR
+    make
+    outDir=${PREFIX}/platform/i386-sim
+    mkdir -p ${outDir}
+    cp -R googlemock/libgmock*.a ${outDir}
+    cp -R googlemock/gtest/libgtest*.a ${outDir}
+    popd > /dev/null
+)
+
+echo "$(tput setaf 2)"
+echo "###################################################################"
+echo "# x86_64 for iOS Simulator"
+echo "###################################################################"
+echo "$(tput sgr0)"
+
+(
+    mkdir ${GTEST_SRC_DIR}/_build64 > /dev/null
+    pushd ${GTEST_SRC_DIR}/_build64 > /dev/null
     cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM=SIMULATOR64
     make
     outDir=${PREFIX}/platform/x86_64-sim
@@ -106,10 +124,10 @@ echo "$(tput sgr0)"
     cd ${PREFIX}/platform
     mkdir universal
 
-    lipo -create x86_64-sim/libgtest.a arm-ios/libgtest.a -output universal/libgtest.a
-    lipo -create x86_64-sim/libgtest_main.a arm-ios/libgtest_main.a -output universal/libgtest_main.a
-    lipo -create x86_64-sim/libgmock.a arm-ios/libgmock.a -output universal/libgmock.a
-    lipo -create x86_64-sim/libgmock_main.a arm-ios/libgmock_main.a -output universal/libgmock_main.a
+    lipo -create i386-sim/libgtest.a x86_64-sim/libgtest.a arm-ios/libgtest.a -output universal/libgtest.a
+    lipo -create i386-sim/libgtest_main.a x86_64-sim/libgtest_main.a arm-ios/libgtest_main.a -output universal/libgtest_main.a
+    lipo -create i386-sim/libgmock.a x86_64-sim/libgmock.a arm-ios/libgmock.a -output universal/libgmock.a
+    lipo -create i386-sim/libgmock_main.a x86_64-sim/libgmock_main.a arm-ios/libgmock_main.a -output universal/libgmock_main.a
 )
 
 (
