@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! type cmake > /dev/null; then
+  echo "cmake is not installed. Please install it first."
+  exit
+fi
+
 echo "$(tput setaf 2)"
 echo "###################################################################"
 echo "# Preparing to build Google Test for iOS"
