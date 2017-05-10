@@ -125,14 +125,21 @@ echo "# Create Universal Libraries and Finalize the packaging"
 echo "###################################################################"
 echo "$(tput sgr0)"
 
+
+function create()
+{
+    MODULE=$1
+    lipo -create i386-sim/"${MODULE}" x86_64-sim/"${MODULE}" arm-ios/"${MODULE}" -output universal/"${MODULE}"
+}
+
 (
     cd ${PREFIX}/platform
     mkdir universal
 
-    lipo -create i386-sim/libgtest.a x86_64-sim/libgtest.a arm-ios/libgtest.a -output universal/libgtest.a
-    lipo -create i386-sim/libgtest_main.a x86_64-sim/libgtest_main.a arm-ios/libgtest_main.a -output universal/libgtest_main.a
-    lipo -create i386-sim/libgmock.a x86_64-sim/libgmock.a arm-ios/libgmock.a -output universal/libgmock.a
-    lipo -create i386-sim/libgmock_main.a x86_64-sim/libgmock_main.a arm-ios/libgmock_main.a -output universal/libgmock_main.a
+    create libgtest.a
+    create libgtest_main.a
+    create libgmock.a
+    create libgmock_main.a
 )
 
 (
