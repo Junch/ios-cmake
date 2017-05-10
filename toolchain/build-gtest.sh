@@ -60,7 +60,7 @@ echo "$(tput sgr0)"
         rm -rf "${GTEST_RELEASE_DIRNAME}"
     fi
     curl --location ${GTEST_RELEASE_URL} --output ${GTEST_RELEASE_DIRNAME}.tar.gz
-    tar xvf ${GTEST_RELEASE_DIRNAME}.tar.gz
+    tar xf ${GTEST_RELEASE_DIRNAME}.tar.gz
     mv "${GTEST_RELEASE_DIRNAME}" "${GTEST_SRC_DIR}"
     #rm ${GTEST_RELEASE_DIRNAME}.tar.gz
 )
@@ -126,7 +126,7 @@ echo "###################################################################"
 echo "$(tput sgr0)"
 
 
-function create()
+function create_universal()
 {
     MODULE=$1
     lipo -create i386-sim/"${MODULE}" x86_64-sim/"${MODULE}" arm-ios/"${MODULE}" -output universal/"${MODULE}"
@@ -136,10 +136,11 @@ function create()
     cd ${PREFIX}/platform
     mkdir universal
 
-    create libgtest.a
-    create libgtest_main.a
-    create libgmock.a
-    create libgmock_main.a
+    arr=(libgtest.a libgtest_main.a libgmock.a libgmock_main.a)
+    for i in "${arr[@]}"
+    do
+        create_universal $i
+    done
 )
 
 (
