@@ -65,59 +65,34 @@ echo "$(tput sgr0)"
     #rm ${GTEST_RELEASE_DIRNAME}.tar.gz
 )
 
-echo "$(tput setaf 2)"
-echo "###################################################################"
-echo "# i386 for iOS Simulator"
-echo "###################################################################"
-echo "$(tput sgr0)"
+function build_lib()
+{
+    PLATFORM=$1
+    FOLDER=$2
+    DESC=$3
 
-(
-    mkdir ${GTEST_SRC_DIR}/_build > /dev/null
-    pushd ${GTEST_SRC_DIR}/_build > /dev/null
-    cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM=SIMULATOR
-    make
-    outDir=${PREFIX}/platform/i386-sim
-    mkdir -p ${outDir}
-    cp -R googlemock/libgmock*.a ${outDir}
-    cp -R googlemock/gtest/libgtest*.a ${outDir}
-    popd > /dev/null
-)
+    echo "$(tput setaf 2)"
+    echo "###################################################################"
+    echo "# ${DESC}"
+    echo "###################################################################"
+    echo "$(tput sgr0)"
 
-echo "$(tput setaf 2)"
-echo "###################################################################"
-echo "# x86_64 for iOS Simulator"
-echo "###################################################################"
-echo "$(tput sgr0)"
+    (
+        mkdir ${GTEST_SRC_DIR}/${FOLDER}> /dev/null
+        pushd ${GTEST_SRC_DIR}/${FOLDER}> /dev/null
+        cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM="${PLATFORM}"
+        make
+        outDir=${PREFIX}/platform/"${FOLDER}"
+        mkdir -p ${outDir}
+        cp -R googlemock/libgmock*.a ${outDir}
+        cp -R googlemock/gtest/libgtest*.a ${outDir}
+        popd > /dev/null
+    )    
+}
 
-(
-    mkdir ${GTEST_SRC_DIR}/_build64 > /dev/null
-    pushd ${GTEST_SRC_DIR}/_build64 > /dev/null
-    cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM=SIMULATOR64
-    make
-    outDir=${PREFIX}/platform/x86_64-sim
-    mkdir -p ${outDir}
-    cp -R googlemock/libgmock*.a ${outDir}
-    cp -R googlemock/gtest/libgtest*.a ${outDir}
-    popd > /dev/null
-)
-
-echo "$(tput setaf 2)"
-echo "###################################################################"
-echo "# arm* for iOS"
-echo "###################################################################"
-echo "$(tput sgr0)"
-
-(
-    mkdir ${GTEST_SRC_DIR}/_buildos > /dev/null
-    pushd ${GTEST_SRC_DIR}/_buildos > /dev/null
-    cmake .. -DCMAKE_TOOLCHAIN_FILE="${PREFIX}/../ios.cmake" -DIOS_PLATFORM=OS
-    make
-    outDir=${PREFIX}/platform/arm-ios
-    mkdir -p ${outDir}
-    cp -R googlemock/libgmock*.a ${outDir}
-    cp -R googlemock/gtest/libgtest*.a ${outDir}
-    popd > /dev/null
-)
+build_lib SIMULATOR   i386-sim    "i386 for iOS Simulator"
+build_lib SIMULATOR64 x86_64-sim  "x86_64 for iOS Simulator"
+build_lib OS          arm-ios     "armv7 armv7s x86_64 arm64 for iOS"
 
 echo "$(tput setaf 2)"
 echo "###################################################################"
